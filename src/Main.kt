@@ -29,20 +29,9 @@ enum class FigureType {
     CIRCLE, SQUARE
 }
 
-fun badPropertyException(invalidProperty: String): Nothing {
-    println("Введено неверное значение параметра property: $invalidProperty")
-    throw Exception()
-}
-
-fun wrongOperationTypeException(invalidOperation: String): Nothing {
-    println("Введен неизвестный тип операции: $invalidOperation")
-    throw Exception()
-}
-
-fun wrongFigureTypeException(invalidFigureType: String): Nothing {
-    println("Введено неизвестное название фигуры: $invalidFigureType")
-    throw Exception()
-}
+class BadPropertyException(invalidProperty: String): RuntimeException("Введено неверное значение параметра property: $invalidProperty") {}
+class WrongOperationTypeException(invalidOperation: String): RuntimeException("Введен неизвестный тип операции: $invalidOperation")
+class WrongFigureTypeException(invalidFigureType: String): RuntimeException("Введено неизвестное название фигуры: $invalidFigureType") {}
 
 
 object FigureServiceImpl: FigureService {
@@ -93,7 +82,7 @@ object ConsoleServiceImpl: ConsoleService {
             "exit" -> return Operation.EXIT
             "getArea" -> return Operation.GET_AREA
             "getPerimeter" -> return Operation.GET_PERIMETER
-            else -> wrongOperationTypeException(operation)
+            else -> throw WrongOperationTypeException(operation)
         }
     }
 
@@ -103,7 +92,7 @@ object ConsoleServiceImpl: ConsoleService {
         val figureType = when (enteredType) {
             "square" -> FigureType.SQUARE
             "circle" -> FigureType.CIRCLE
-            else -> wrongFigureTypeException(enteredType)
+            else -> throw WrongFigureTypeException(enteredType)
         }
         println("Введите обязательный параметр property")
         val property = readln()
@@ -113,7 +102,7 @@ object ConsoleServiceImpl: ConsoleService {
                 FigureType.CIRCLE -> FigureServiceImpl.addCircle(property.toDouble())
             }
         } catch (ex: Exception) {
-            badPropertyException(property)
+            throw BadPropertyException(property)
         }
     }
 
